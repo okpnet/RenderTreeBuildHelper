@@ -1,17 +1,15 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
-using System.Xml.Linq;
 
 namespace RenderTreeBuildHelper
 {
     public static class HelperExtension
     {
-        /// <summary>
-        /// add class
-        /// </summary>
         internal const string ATTR_CLASS = "class";
+        internal const string ATTR_CHILD_CONTENT = "ChildContent";
         /// <summary>
-        /// Add a class to the element.
+        /// Add  class.
+        /// Specify the class value string as an array.
         /// </summary>
         /// <param name="builder"></param>
         /// <param name="seq"></param>
@@ -70,12 +68,14 @@ namespace RenderTreeBuildHelper
         public static void AddIcons(this RenderTreeBuilder builder,ref int sequence, string iconClass)
         {
             var seq = sequence;
-            builder.OpenElement(seq++, "span");
-            builder.AddAttribute(seq++, "class", "icon");
-            builder.OpenElement(seq++, "i");
-            builder.AddAttribute(seq++, "class", iconClass);
-            builder.CloseElement();
-            builder.CloseElement();
+            builder.OpenElementHelper(ref seq, "span", () =>
+            {
+
+                builder.AddClass(ref seq, "icon");
+                builder.OpenElementHelper(ref seq, "i", () => {
+                    builder.AddClass(ref seq, iconClass);
+                });
+            });
             sequence = seq;
             return;
         }
@@ -97,7 +97,7 @@ namespace RenderTreeBuildHelper
             }
         }
         /// <summary>
-        /// 
+        /// Specify the content to include RenderFragment.
         /// </summary>
         /// <param name="builder"></param>
         /// <param name="sequence"></param>
@@ -110,7 +110,7 @@ namespace RenderTreeBuildHelper
             sequence = seq;
         }
         /// <summary>
-        /// 
+        /// Specify ‘ChildContent’ containing child elements.
         /// </summary>
         /// <param name="builder"></param>
         /// <param name="sequence"></param>
@@ -118,7 +118,7 @@ namespace RenderTreeBuildHelper
         public static void AddChildContentsHelper(this RenderTreeBuilder builder, ref int sequence,  Action<RenderTreeBuilder> action)
         {
             var seq = sequence;
-            builder.AddAttribute(seq++, "ChildContent", (RenderFragment)(action.Invoke));
+            builder.AddAttribute(seq++, ATTR_CHILD_CONTENT, (RenderFragment)(action.Invoke));
             sequence = seq;
         }
     }
