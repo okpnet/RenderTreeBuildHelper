@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Components.Rendering;
+﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Rendering;
+using System.Xml.Linq;
 
 namespace RenderTreeBuildHelper
 {
@@ -15,12 +17,13 @@ namespace RenderTreeBuildHelper
         /// <param name="seq"></param>
         /// <param name="classes"></param>
         /// <returns></returns>
-        public static int AddClass(this RenderTreeBuilder builder,int sequence, params string[] classes)
+        public static void AddClass(this RenderTreeBuilder builder,ref int sequence, params string[] classes)
         {
             var seq = sequence;
-            if (classes.Length == 0) return seq;
+            if (classes.Length == 0) return;
             builder.AddAttribute(seq++, "class", string.Join(" ", classes));
-            return seq;
+            sequence = seq;
+            return;
         }
         /// <summary>
         /// Close the element after the action of opening the element and inserting content.
@@ -30,13 +33,14 @@ namespace RenderTreeBuildHelper
         /// <param name="element"></param>
         /// <param name="contents"></param>
         /// <returns></returns>
-        public static int OpenElementHelper(this RenderTreeBuilder builder, int sequence, string element, Action contents)
+        public static void OpenElementHelper(this RenderTreeBuilder builder,ref int sequence, string element, Action contents)
         {
             var seq = sequence;
             builder.OpenElement(seq++, element);
             contents.Invoke();
             builder.CloseElement();
-            return seq;
+            sequence = seq;
+            return;
         }
         /// <summary>
         /// Close the component after the action of opening the component and inserting content.
@@ -46,13 +50,14 @@ namespace RenderTreeBuildHelper
         /// <param name="sequence"></param>
         /// <param name="contents"></param>
         /// <returns></returns>
-        public static int OpenComponentHelper<TComponent>(this RenderTreeBuilder builder, int sequence, Action contents) where TComponent : notnull, Microsoft.AspNetCore.Components.IComponent
+        public static void OpenComponentHelper<TComponent>(this RenderTreeBuilder builder,ref int sequence, Action contents) where TComponent : notnull, Microsoft.AspNetCore.Components.IComponent
         {
             var seq = sequence;
             builder.OpenComponent<TComponent>(seq++);
             contents.Invoke();
             builder.CloseComponent();
-            return seq;
+            sequence = seq;
+            return;
         }
 
         /// <summary>
@@ -62,7 +67,7 @@ namespace RenderTreeBuildHelper
         /// <param name="seq"></param>
         /// <param name="iconClass"></param>
         /// <returns></returns>
-        public static int AddIcons(this RenderTreeBuilder builder, int sequence, string iconClass)
+        public static void AddIcons(this RenderTreeBuilder builder,ref int sequence, string iconClass)
         {
             var seq = sequence;
             builder.OpenElement(seq++, "span");
@@ -71,7 +76,50 @@ namespace RenderTreeBuildHelper
             builder.AddAttribute(seq++, "class", iconClass);
             builder.CloseElement();
             builder.CloseElement();
-            return seq;
+            sequence = seq;
+            return;
+        }
+        /// <summary>
+        /// Optional parameter attributes.
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="sequence"></param>
+        /// <param name="name"></param>
+        /// <param name="addAttr"></param>
+        public static void AddAttributeHelper(this RenderTreeBuilder builder, ref int sequence,string name,params string[] addAttr)
+        {
+            if (addAttr.Length>0 && string.Join("", addAttr).Trim() is string attrs && attrs.Length>0 )
+            {
+                var seq = sequence;
+
+                builder.AddAttribute(seq++, name, attrs);
+                sequence = seq;
+            }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="sequence"></param>
+        /// <param name="contentName"></param>
+        /// <param name="action"></param>
+        public static void AddContentsHelper(this RenderTreeBuilder builder, ref int sequence,string contentName,Action<RenderTreeBuilder> action)
+        {
+            var seq = sequence;
+            builder.AddAttribute(seq++, contentName,(RenderFragment)(action.Invoke));
+            sequence = seq;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="sequence"></param>
+        /// <param name="action"></param>
+        public static void AddChildContentsHelper(this RenderTreeBuilder builder, ref int sequence,  Action<RenderTreeBuilder> action)
+        {
+            var seq = sequence;
+            builder.AddAttribute(seq++, "ChildContent", (RenderFragment)(action.Invoke));
+            sequence = seq;
         }
     }
 }
