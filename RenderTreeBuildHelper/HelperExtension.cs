@@ -121,5 +121,138 @@ namespace RenderTreeBuildHelper
             builder.AddAttribute(seq++, ATTR_CHILD_CONTENT, (RenderFragment)(action.Invoke));
             sequence = seq;
         }
+        /// <summary>
+        /// add mouse event to element and specify call back function for fire. 
+        /// <param name="builder"></param>
+        /// <param name="sequence"></param>
+        /// <param name="events"></param>
+        /// <param name="callback"></param>
+        /// <exception cref="NotImplementedException"></exception>
+        public static void AddMouseEvent(this RenderTreeBuilder builder, ref int sequence, MouseEvent events, EventCallback callback)
+        {
+            var seq = sequence;
+            builder.AddAttribute(seq++, events.GetEventName(), callback);
+            sequence = seq;
+        }
+        /// <summary>
+        /// add mouse event to element and specify call back function for fire. 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="builder"></param>
+        /// <param name="sequence"></param>
+        /// <param name="events"></param>
+        /// <param name="callback"></param>
+        public static void AddMouseEvent<T>(this RenderTreeBuilder builder, ref int sequence, MouseEvent events, EventCallback<T> callback)
+        {
+            var seq = sequence;
+            builder.AddAttribute(seq++, events.GetEventName(), callback);
+            sequence = seq;
+        }
+        /// <summary>
+        /// add touch event to element and specify call back function for fire. 
+        /// <param name="builder"></param>
+        /// <param name="sequence"></param>
+        /// <param name="events"></param>
+        /// <param name="callback"></param>
+        /// <exception cref="NotImplementedException"></exception>
+        public static void AddTouchEvent(this RenderTreeBuilder builder, ref int sequence, TouchEvent events, EventCallback callback)
+        {
+            var seq = sequence;
+            builder.AddAttribute(seq++, events.GetEventName(), callback);
+            sequence = seq;
+        }
+        /// <summary>
+        /// add touch event to element and specify call back function for fire. 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="builder"></param>
+        /// <param name="sequence"></param>
+        /// <param name="events"></param>
+        /// <param name="callback"></param>
+        public static void AddTouchEvent<T>(this RenderTreeBuilder builder, ref int sequence, TouchEvent events, EventCallback<T> callback)
+        {
+            var seq = sequence;
+            builder.AddAttribute(seq++, events.GetEventName(), callback);
+            sequence = seq;
+        }
+        /// <summary>
+        /// mouse event enums
+        /// </summary>
+        public enum MouseEvent:int
+        {
+            Click,
+            Ctextmenu,
+            Dblclick,
+            Mousedown,
+            Mouseenter,
+            Mouseleave,
+            Mousemove,
+            Mouseout,
+            Mouseover,
+            Mouseup,
+            Drag,
+            Dragend,
+            Dragenter,
+            Dragleave,
+            Dragover,
+            Dragstart,
+            Drop,
+        }
+        /// <summary>
+        /// touch event enums
+        /// </summary>
+        public enum TouchEvent
+        {
+            Touchstart,
+            Touchend,
+            Touchmove,
+            Touchcancel,
+        }
+        /// <summary>
+        /// Converts a mouse event enum to a string for a JavaScript function.
+        /// </summary>
+        /// <param name="mouseEvent"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public static string GetEventName(this MouseEvent mouseEvent)
+        {
+            return mouseEvent switch
+            {
+                MouseEvent.Click => "onclick",
+                MouseEvent.Ctextmenu => "onctextmenu",
+                MouseEvent.Dblclick => "ondblclick",
+                MouseEvent.Mousedown => "onmousedown",
+                MouseEvent.Mouseenter => "onmouseenter",
+                MouseEvent.Mouseleave => "onmouseleave",
+                MouseEvent.Mousemove => "onmousemove",
+                MouseEvent.Mouseout => "onmouseout",
+                MouseEvent.Mouseover => "onmouseover",
+                MouseEvent.Mouseup => "onmouseup",
+                MouseEvent.Drag => "ondrag",
+                MouseEvent.Dragend => "ondragend",
+                MouseEvent.Dragenter => "ondragenter",
+                MouseEvent.Dragleave => "ondragleave",
+                MouseEvent.Dragover => "ondragover",
+                MouseEvent.Dragstart => "ondragstart",
+                MouseEvent.Drop => "ondrop",
+                _ => throw new NotImplementedException($"selected value '{(int)mouseEvent}' is not in enum.'")
+            };
+        }
+        /// <summary>
+        /// Converts a touch event enum to a string for a JavaScript function.
+        /// </summary>
+        /// <param name="touchEvent"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public static string GetEventName(this TouchEvent touchEvent)
+        {
+            return touchEvent switch {
+                TouchEvent.Touchstart=> "ontouchstart",
+                TouchEvent.Touchend => "ontouchend",
+                TouchEvent.Touchmove => "ontouchmove",
+                TouchEvent.Touchcancel => "ontouchcancel",
+                _ => throw new NotImplementedException($"selected value '{(int)touchEvent}' is not in enum.'")
+            };
+        }
     }
 }
