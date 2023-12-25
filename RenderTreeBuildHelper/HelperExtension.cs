@@ -15,7 +15,7 @@ namespace RenderTreeBuildHelper
         /// <param name="seq"></param>
         /// <param name="classes"></param>
         /// <returns></returns>
-        public static void AddClass(this RenderTreeBuilder builder,ref int sequence, params string[] classes)
+        public static void AddClassHelper(this RenderTreeBuilder builder,ref int sequence, params string[] classes)
         {
             var seq = sequence;
             if (classes.Length == 0) return;
@@ -71,9 +71,9 @@ namespace RenderTreeBuildHelper
             builder.OpenElementHelper(ref seq, "span", () =>
             {
 
-                builder.AddClass(ref seq, "icon");
+                builder.AddClassHelper(ref seq, "icon");
                 builder.OpenElementHelper(ref seq, "i", () => {
-                    builder.AddClass(ref seq, iconClass);
+                    builder.AddClassHelper(ref seq, iconClass);
                 });
             });
             sequence = seq;
@@ -119,6 +119,18 @@ namespace RenderTreeBuildHelper
         {
             var seq = sequence;
             builder.AddAttribute(seq++, ATTR_CHILD_CONTENT, (RenderFragment)(action.Invoke));
+            sequence = seq;
+        }
+        /// <summary>
+        /// Specify ‘ChildContent’ containing child elements.
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="sequence"></param>
+        /// <param name="action"></param>
+        public static void AddChildContentsHelper(this RenderTreeBuilder builder, ref int sequence,string contentName, Action<RenderTreeBuilder> action)
+        {
+            var seq = sequence;
+            builder.AddAttribute(seq++, contentName, (RenderFragment)(action.Invoke));
             sequence = seq;
         }
         /// <summary>
