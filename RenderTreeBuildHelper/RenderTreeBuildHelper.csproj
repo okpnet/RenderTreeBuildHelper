@@ -20,4 +20,8 @@
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="set SourceDir=$(ProjectDir)bin\$(Configuration)\&#xD;&#xA;&#xD;&#xA;for %25%25i in (&quot;%25SourceDir%25*.nupkg&quot;) do (&#xD;&#xA;    copy /Y &quot;%25%25i&quot; &quot;C:\Users\htakahashi\OneDrive\nugetServer&quot;&#xD;&#xA;    copy /Y &quot;%25%25i&quot; &quot;C:\Users\隼人さん\OneDrive\nugetServer&quot;&#xD;&#xA;)" />
+  </Target>
+
 </Project>
