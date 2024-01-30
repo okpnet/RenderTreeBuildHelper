@@ -4,7 +4,11 @@
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Version>0.9.1</Version>
+    <Version>0.9.2</Version>
+    <PackageId>RenderTreeBuildHelper</PackageId>
+    <Authors>hayato takahashi</Authors>
+    <AssemblyName>rndtrbuild</AssemblyName>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
 
 
@@ -19,9 +23,5 @@
   <ItemGroup>
     <Folder Include="wwwroot\" />
   </ItemGroup>
-
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="set SourceDir=$(ProjectDir)bin\$(Configuration)\&#xD;&#xA;&#xD;&#xA;for %25%25i in (&quot;%25SourceDir%25*.nupkg&quot;) do (&#xD;&#xA;    copy /Y &quot;%25%25i&quot; &quot;C:\Users\htakahashi\OneDrive\nugetServer&quot;&#xD;&#xA;    copy /Y &quot;%25%25i&quot; &quot;C:\Users\隼人さん\OneDrive\nugetServer&quot;&#xD;&#xA;)" />
-  </Target>
 
 </Project>
