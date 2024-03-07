@@ -97,6 +97,19 @@ namespace RenderTreeBuildHelper
             }
         }
         /// <summary>
+        /// TODO
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="sequence"></param>
+        /// <param name="name"></param>
+        /// <param name="value"></param>
+        public static void AddAttributeHelper(this RenderTreeBuilder builder, ref int sequence, string name, object? value)
+        {
+            var seq = sequence;
+            builder.AddAttribute(seq++, name, value);
+            sequence = seq;
+        }
+        /// <summary>
         /// Specify the content to include RenderFragment.
         /// </summary>
         /// <param name="builder"></param>
