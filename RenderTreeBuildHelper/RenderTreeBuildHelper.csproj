@@ -1,10 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Version>0.9.2</Version>
+    <Version>0.18.0</Version>
     <PackageId>RenderTreeBuildHelper</PackageId>
     <Authors>hayato takahashi</Authors>
     <AssemblyName>rndtrbuild</AssemblyName>
@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.24" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.6" />
   </ItemGroup>
 
   <ItemGroup>
