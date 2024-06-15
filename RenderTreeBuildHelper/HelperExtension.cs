@@ -1,5 +1,8 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Rendering;
+using System.Linq.Expressions;
+using System.Xml.Schema;
 
 namespace RenderTreeBuildHelper
 {
@@ -7,6 +10,39 @@ namespace RenderTreeBuildHelper
     {
         internal const string ATTR_CLASS = "class";
         internal const string ATTR_CHILD_CONTENT = "ChildContent";
+        internal const string ATTR_VALUE = "Value";
+        internal const string ATTR_VALUE_CHANGE = "ValueChanged";
+        internal const string ATTR_VALUE_EXPRESSION = "ValueExpression";
+        internal const string ATTR_NAME = "Name";
+
+        public static EventCallback<T> CreateEventCallback<T>(this T? value,object receiver, Action<T> callback)=> EventCallback.Factory.Create<T>(receiver, callback);
+
+        public static EventCallback<T> CreateEventCallback<T>(this T? value, object receiver, Func<T, Task> callback)=> EventCallback.Factory.Create<T>(receiver, callback);
+
+        public static EventCallback<T> CreateEventCallback<T>(this T? value, object receiver, EventCallback<T> callback)=> EventCallback.Factory.Create<T>(receiver, callback);
+        /// <summary>
+        /// Close the element after the action of opening the  'select' element and inserting content.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="builder"></param>
+        /// <param name="sequence"></param>
+        /// <param name="value"></param>
+        /// <param name="valueChange"></param>
+        /// <param name="expression"></param>
+        /// <param name="options"></param>
+        public static void OpenInputSelectHelper<T>(this RenderTreeBuilder builder, ref int sequence, T value, EventCallback<T> valueChange, Expression<Func<T>> expression, RenderFragment options)
+        {
+            int seq = sequence;
+            builder.OpenComponentHelper<InputSelect<T>>(ref seq, () =>
+            {
+                builder.AddAttribute(seq++, ATTR_VALUE, value);
+                builder.AddAttribute(seq++, ATTR_VALUE_CHANGE, valueChange);
+                builder.AddAttribute(seq++, ATTR_VALUE_EXPRESSION, expression);
+                builder.AddAttribute(seq++, ATTR_CHILD_CONTENT, options);
+            });
+            sequence = seq;
+            return;
+        }
         /// <summary>
         /// Add  class.
         /// Specify the class value string as an array.
@@ -57,7 +93,46 @@ namespace RenderTreeBuildHelper
             sequence = seq;
             return;
         }
-
+        /// <summary>
+        /// Close the component after the action of opening the cascade component and inserting content.
+        /// </summary>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="builder"></param>
+        /// <param name="sequence"></param>
+        /// <param name="value"></param>
+        /// <param name="parameterName"></param>
+        /// <param name="action"></param>
+        public static void OpenCascaingParameter<TValue>(this RenderTreeBuilder builder, ref int sequence,TValue value,string parameterName, Action<RenderTreeBuilder> action)
+        {
+            var seq = sequence;
+            builder.OpenComponentHelper<CascadingValue<TValue>>(ref seq, ()=>
+            {
+                builder.AddAttribute(seq++, ATTR_VALUE, value);
+                builder.AddAttribute(seq++, ATTR_NAME, parameterName);
+                builder.AddAttribute(seq++, ATTR_CHILD_CONTENT, (RenderFragment)(action.Invoke));
+            });
+            sequence = seq;
+            return;
+        }
+        /// <summary>
+        /// Close the component after the action of opening the cascade component and inserting content.
+        /// </summary>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="builder"></param>
+        /// <param name="sequence"></param>
+        /// <param name="value"></param>
+        /// <param name="action"></param>
+        public static void OpenCascaingParameter<TValue>(this RenderTreeBuilder builder, ref int sequence, TValue value, Action<RenderTreeBuilder> action)
+        {
+            var seq = sequence;
+            builder.OpenComponentHelper<CascadingValue<TValue>>(ref seq, () =>
+            {
+                builder.AddAttribute(seq++, ATTR_VALUE, value);
+                builder.AddAttribute(seq++, ATTR_CHILD_CONTENT, (RenderFragment)(action.Invoke));
+            });
+            sequence = seq;
+            return;
+        }
         /// <summary>
         /// &U+003C span class="icon" &U+003E &U+003Ci class="gg-play-list-add"/&U+003E &U+003C/span &U+003Eを生成
         /// </summary>
