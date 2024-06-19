@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Rendering;
+using Microsoft.Extensions.Logging;
 using System.Linq.Expressions;
 using System.Xml.Schema;
 
@@ -273,6 +274,19 @@ namespace RenderTreeBuildHelper
         {
             var seq = sequence;
             builder.AddAttribute(seq++, events.GetEventName(), callback);
+            sequence = seq;
+        }
+        /// <summary>
+        /// add "ValueExpression" attr to input contents.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="builder"></param>
+        /// <param name="sequence"></param>
+        /// <param name="expression"></param>
+        public static void AddValueExpression<T>(this RenderTreeBuilder builder, ref int sequence,Expression<Func<T>> expression)
+        {
+            var seq = sequence;
+            builder.AddAttribute(seq++, ATTR_VALUE_EXPRESSION, expression);
             sequence = seq;
         }
         /// <summary>
